@@ -65,8 +65,8 @@ export function DashboardChart({ data }: DashboardChartProps) {
                                     marginBottom: '4px',
                                     textTransform: 'uppercase'
                                 }}
-                                formatter={(value: number) => [
-                                    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value),
+                                formatter={(value?: number) => [
+                                    new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(value ?? 0),
                                     'Total'
                                 ]}
                             />
