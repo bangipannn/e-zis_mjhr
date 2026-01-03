@@ -73,7 +73,7 @@ export default async function DashboardPage(props: {
     <div className="space-y-6 sm:space-y-10 pb-20">
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl sm:text-5xl font-black text-emerald-950 tracking-tight">Dashboard</h1>
+          <h1 className="text-3xl sm:text-5xl font-black text-emerald-950 tracking-tight">E-ZIS Dashboard</h1>
           <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Ringkasan Real-time</p>
         </div>
         <DashboardDateFilter />
