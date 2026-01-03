@@ -6,9 +6,9 @@ import { ArrowLeft, Edit } from "lucide-react"
 import { notFound } from "next/navigation"
 
 interface EditTransactionPageProps {
-    params: {
+    params: Promise<{
         id: string
-    }
+    }>
 }
 
 export default async function EditTransactionPage({ params }: EditTransactionPageProps) {
