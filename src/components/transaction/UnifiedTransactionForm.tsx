@@ -322,8 +322,8 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                                     <UserCheck className="size-5 sm:size-6" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h3 className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight truncate">Data Pembayar</h3>
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 truncate">Nama pembayar {type.includes('FITRAH') ? 'zakat' : 'mal'}</p>
+                                    <h3 className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight truncate">Data Muzakki</h3>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 truncate">Nama Muzakki {type.includes('FITRAH') ? 'zakat' : 'mal'}</p>
                                 </div>
                             </div>
 
@@ -363,7 +363,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                                         {(idx + 1).toString().padStart(2, '0')}
                                     </div>
                                     <Input
-                                        placeholder={`Nama Pembayar ${idx + 1}...`}
+                                        placeholder={`Nama Muzakki ${idx + 1}...`}
                                         value={name}
                                         onChange={(e) => {
                                             const newNames = [...names]
@@ -388,7 +388,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                             </div>
                             <div className="min-w-0">
                                 <h3 className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight truncate">Kalkulasi Nominal</h3>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 truncate">Sesuaikan nominal per jiwa</p>
+                                <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mt-1 truncate">Warning! Sesuaikan nominal (input manual)</p>
                             </div>
                         </div>
 
@@ -476,7 +476,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
 
                             <div className="space-y-6">
                                 <div className="flex justify-between items-center group/item">
-                                    <span className="text-emerald-100/60 font-medium text-sm">Zakat ({names.length} Orang)</span>
+                                    <span className="text-emerald-100/60 font-medium text-sm">Zakat ({names.length} Muzakki)</span>
                                     <span className="text-xl font-black tracking-tight group-hover:text-emerald-400 transition-colors">
                                         {type === "FITRAH_BERAS"
                                             ? `${totalZakatBeras} L`
@@ -495,7 +495,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
 
                                 <div className="flex justify-between items-end">
                                     <div className="space-y-1">
-                                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Total Tagihan</span>
+                                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Total Dibayar</span>
                                         <p className="text-sm text-emerald-100/40">Zakat & Infaq Terakumulasi</p>
                                     </div>
                                     <div className="text-right">
@@ -527,7 +527,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                                     kembalian < 0 ? "bg-rose-500/10 border border-rose-500/20 text-rose-400" : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
                                 )}>
                                     <div className="flex flex-col">
-                                        <span className="text-[10px] font-black uppercase tracking-widest">{kembalian < 0 ? 'Kekurangan' : 'Kembalian'}</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">{kembalian < 0 ? 'Kekurangan' : 'Uang Kembali'}</span>
                                         <span className="text-2xl font-black tracking-tight">
                                             {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(kembalian)}
                                         </span>

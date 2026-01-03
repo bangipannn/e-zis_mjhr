@@ -48,7 +48,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                 />
                             </div>
                             <div className="flex flex-col">
-                                <span className="text-xl font-black text-white tracking-tighter leading-none">ZIS MJHR</span>
+                                <span className="text-xl font-black text-white tracking-tighter leading-none">E-ZIS MJHR</span>
                                 <span className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest mt-1">Sistem Manajemen</span>
                             </div>
                         </Link>

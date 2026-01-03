@@ -27,8 +27,8 @@ export function Header({ onToggleSidebar }: HeaderProps) {
             </div>
             <div className="flex items-center gap-3 md:gap-4">
                 <div className="hidden sm:flex flex-col items-end mr-2">
-                    <p className="text-[10px] font-black text-emerald-900 uppercase">Administrator</p>
-                    <p className="text-[8px] font-bold text-emerald-600/60 uppercase tracking-widest">Active Session</p>
+                    <p className="text-[10px] font-black text-emerald-900 uppercase">Pengunjung</p>
+                    <p className="text-[8px] font-bold text-emerald-600/60 uppercase tracking-widest">Belum Login</p>
                 </div>
                 <div className="size-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/20 group cursor-pointer transition-transform hover:scale-105">
                     <span className="text-sm font-black">A</span>

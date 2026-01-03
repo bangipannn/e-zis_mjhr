@@ -34,14 +34,14 @@ export default async function TransactionPage(props: {
             <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black text-emerald-950 tracking-tight">Riwayat Transaksi</h1>
-                    <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Daftar rekaman zakat & infaq masuk</p>
+                    <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Daftar zakat & infaq masuk</p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-center gap-4 xl:ml-auto">
                     <DashboardDateFilter />
                     <Link href="/transaksi/new" className="w-full sm:w-auto">
                         <Button className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg shadow-xl shadow-emerald-500/20 active:scale-95 transition-all">
-                            <Plus className="mr-2 size-6" /> Catat Transaksi
+                            <Plus className="mr-2 size-6" /> Input Transaksi
                         </Button>
                     </Link>
                 </div>
