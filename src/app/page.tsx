@@ -1,3 +1,4 @@
+// Trigger Vercel Build - Force Update UI Labels
 import { getDashboardStats } from "@/lib/actions/dashboard_stats"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
 import { Users, Coins, TrendingUp, ShoppingBag, Wheat, Wallet, HeartHandshake, UserCheck } from "lucide-react"
