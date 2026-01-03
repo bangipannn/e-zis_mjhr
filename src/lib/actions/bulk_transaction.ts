@@ -21,7 +21,7 @@ export type BulkTransactionData = {
  * Menggunakan $transaction untuk memastikan atomisitas data (semua tersimpan atau tidak sama sekali).
  */
 export async function createBulkTransaction(data: BulkTransactionData) {
-    const receiptId = randomUUID() // Unique ID for this batch
+    const receiptId = randomUUID() // ID unik untuk batch ini
 
     try {
         await prisma.$transaction(async (tx) => {
@@ -61,7 +61,7 @@ export async function createBulkTransaction(data: BulkTransactionData) {
 
         return { success: true, receiptId }
     } catch (error) {
-        console.error("Bulk transaction error:", error)
+        console.error("Gagal mencatat transaksi bulk:", error)
         return { success: false, error: "Gagal menyimpan transaksi" }
     }
 }
@@ -98,6 +98,7 @@ export async function updateBulkTransaction(receiptId: string | null | undefined
                 });
             }
 
+            // 3. Tambahkan Infaq baru jika ada
             if (data.infaqAmount > 0) {
                 await tx.transaction.create({
                     data: {
@@ -117,7 +118,7 @@ export async function updateBulkTransaction(receiptId: string | null | undefined
         revalidatePath("/")
         return { success: true, receiptId: finalReceiptId }
     } catch (error) {
-        console.error("Update bulk transaction error:", error)
+        console.error("Gagal memperbarui transaksi bulk:", error)
         return { success: false, error: "Gagal memperbarui transaksi" }
     }
 }

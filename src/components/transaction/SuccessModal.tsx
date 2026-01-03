@@ -28,7 +28,7 @@ export default function SuccessModal() {
 
     const handleClose = () => {
         setIsOpen(false)
-        // Clean up URL params
+        // Bersihkan parameter URL agar modal tidak muncul lagi saat halaman di-refresh
         const params = new URLSearchParams(searchParams.toString())
         params.delete("success")
         params.delete("receiptId")
@@ -47,7 +47,7 @@ export default function SuccessModal() {
             return
         }
 
-        // Aggregate data for receipt
+        // Akumulasi data untuk ditampilkan pada struk
         const first = transactions[0]
         const names = transactions.map((t: any) => t.muzakkiName).filter(Boolean)
         const totalZakatUang = transactions.filter((t: any) => t.type !== "FITRAH_BERAS" && t.type !== "INFAQ").reduce((acc: number, curr: any) => acc + curr.amount, 0)

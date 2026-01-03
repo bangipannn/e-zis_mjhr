@@ -142,10 +142,12 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
         }
     }
 
+    // Menangani aksi cetak struk
     const handlePrint = () => {
         window.print()
     }
 
+    // Mereset formulir untuk transaksi baru
     const resetForm = () => {
         setStep("INPUT")
         setNames([""])

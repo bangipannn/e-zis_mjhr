@@ -11,6 +11,10 @@ interface EditTransactionPageProps {
     }
 }
 
+/**
+ * Halaman Edit Transaksi.
+ * Mendukung pengeditan transaksi tunggal maupun transaksi grup (bulk).
+ */
 export default async function EditTransactionPage({ params }: EditTransactionPageProps) {
     const { id } = await params
     const transaction = await getTransactionById(parseInt(id))
@@ -26,18 +30,20 @@ export default async function EditTransactionPage({ params }: EditTransactionPag
         transactions = [transaction]
     }
 
-    // Separate Infaq and Zakat transactions
+    // Pisahkan transaksi Infaq dan Zakat
     const infaqTx = transactions.find(t => t.type === 'INFAQ')
     const zakatTxs = transactions.filter(t => t.type !== 'INFAQ')
 
     if (zakatTxs.length === 0) {
-        // This shouldn't happen for a valid transaction group, but handle it
+        // Hal ini tidak seharusnya terjadi untuk grup transaksi yang valid, tapi tetap ditangani
         notFound()
     }
 
     const firstZakat = zakatTxs[0]
     const totalZakatUang = zakatTxs.reduce((acc, t) => acc + (t.amount || 0), 0)
     const totalInfaq = infaqTx?.amount || 0
+
+    // Siapkan data awal untuk formulir
     const initialData = {
         receiptId: transaction.receiptId || undefined,
         type: firstZakat.type,
@@ -76,4 +82,3 @@ export default async function EditTransactionPage({ params }: EditTransactionPag
         </div>
     )
 }
-

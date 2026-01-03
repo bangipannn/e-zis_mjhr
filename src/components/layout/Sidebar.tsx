@@ -21,7 +21,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
     return (
         <>
-            {/* Mobile Overlay */}
+            {/* Overlay Mobile */}
             <div
                 className={cn(
                     "fixed inset-0 bg-emerald-950/60 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300",
@@ -49,7 +49,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xl font-black text-white tracking-tighter leading-none">ZIS MJHR</span>
-                                <span className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest mt-1">Management System</span>
+                                <span className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest mt-1">Sistem Manajemen</span>
                             </div>
                         </Link>
                     </div>

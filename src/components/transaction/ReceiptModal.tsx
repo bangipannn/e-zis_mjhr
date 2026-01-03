@@ -34,16 +34,16 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
     return (
         <Portal>
             <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 font-sans receipt-modal-overlay">
-                {/* Backdrop */}
+                {/* Latar Belakang (Backdrop) */}
                 <div
                     className="absolute inset-0 bg-slate-900/60 backdrop-blur-md animate-in fade-in duration-300 print:hidden"
                     onClick={onClose}
                 />
 
-                {/* Modal Content */}
+                {/* Konten Modal */}
                 <div className="relative w-full max-w-md max-h-[90vh] flex flex-col animate-in fade-in zoom-in-95 duration-300 print:max-h-none print:w-full print:max-w-none print:static print:animate-none">
                     <div className="bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border-0 print:shadow-none print:rounded-none">
-                        {/* Header */}
+                        {/* Header Modal */}
                         <div className="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white/50 backdrop-blur-sm sticky top-0 z-10 print:hidden">
                             <h2 className="font-bold text-slate-800 tracking-tight">Struk Transaksi</h2>
                             <Button
@@ -56,9 +56,9 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
                             </Button>
                         </div>
 
-                        {/* Scrollable Content Area */}
+                        {/* Area Konten dengan Scroll */}
                         <div className="p-6 overflow-y-auto flex-1 custom-scrollbar bg-slate-50/50 print:p-0 print:overflow-visible print:bg-white">
-                            {/* Printable Area */}
+                            {/* Area yang Dapat Dicetak */}
                             <Card className="print-section border-0 shadow-sm rounded-2xl overflow-hidden bg-white ring-1 ring-slate-200/60 print:ring-0 print:shadow-none print:rounded-none">
                                 <CardContent className="p-8 space-y-6 font-mono text-sm text-slate-600 print:p-4">
                                     <div className="text-center border-b border-slate-100 pb-6 mb-2 print:pb-4">
@@ -141,7 +141,7 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
                             </Card>
                         </div>
 
-                        {/* Footer Actions */}
+                        {/* Tombol Aksi di Bawah */}
                         <div className="p-6 border-t border-slate-100 flex gap-4 print:hidden bg-white">
                             <Button
                                 onClick={handlePrint}
@@ -166,18 +166,18 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
                         margin: 0;
                         size: auto;
                     }
-                    /* Hide everything in the body */
+                    /* Sembunyikan semua elemen di body saat cetak */
                     body * {
                         visibility: hidden !important;
                     }
-                    /* Show the portal overlay and the print section specifically */
+                    /* Tampilkan overlay modal dan area cetak secara spesifik */
                     .receipt-modal-overlay,
                     .receipt-modal-overlay *,
                     .print-section,
                     .print-section * {
                         visibility: visible !important;
                     }
-                    /* Force display block/flex for elements inside print section */
+                    /* Atur layout area cetak agar memenuhi halaman */
                     .print-section {
                         display: block !important;
                         position: absolute !important;
@@ -194,7 +194,7 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
                     .print-section .grid { display: grid !important; }
                     .print-section .inline-block { display: inline-block !important; }
                     
-                    /* Hide non-printable modal parts */
+                    /* Sembunyikan elemen yang tidak perlu dicetak */
                     .print-hidden, .print\:hidden {
                         display: none !important;
                         visibility: hidden !important;

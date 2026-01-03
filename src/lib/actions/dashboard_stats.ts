@@ -30,8 +30,7 @@ export async function getDashboardStats(startDate?: string, endDate?: string) {
         const uniqueMuzakki = new Set(transactions.map(t => (t as any).muzakkiName))
         const totalMuzakki = uniqueMuzakki.size
 
-        // Calculate totals in JS to avoid complex group by logic if enum handling is tricky, 
-        // but groupBy is better. Let's use simple reduction for clarity and Type safety.
+        // Hitung total di JS untuk kesederhanaan dan keamanan tipe data.
         let totalUang = 0
         let totalBeras = 0
         let breakdown = {
@@ -50,7 +49,7 @@ export async function getDashboardStats(startDate?: string, endDate?: string) {
             return date.toISOString().split('T')[0]
         }).reverse()
 
-        // Initialize map
+        // Inisialisasi map harian
         last7Days.forEach(day => dailyDataMap[day] = 0)
 
         transactions.forEach(t => {
@@ -83,7 +82,7 @@ export async function getDashboardStats(startDate?: string, endDate?: string) {
             chartData
         }
     } catch (error) {
-        console.error("Stats error:", error)
+        console.error("Gagal mengambil statistik dashboard:", error)
         return {
             totalUang: 0,
             totalBeras: 0,
