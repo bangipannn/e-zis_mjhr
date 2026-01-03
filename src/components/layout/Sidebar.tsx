@@ -1,14 +1,14 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { LayoutDashboard, Users, Receipt, CreditCard, Droplets, Coins, MapPin } from "lucide-react"
+import { LayoutDashboard, CreditCard, MapPin } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const navigation = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Transaksi Zakat", href: "/transaksi", icon: CreditCard },
-    // { name: "Laporan", href: "/laporan", icon: Receipt },
 ]
 
 interface SidebarProps {
@@ -21,7 +21,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
     return (
         <>
-            {/* Mobile Overlay */}
+            {/* Overlay Mobile */}
             <div
                 className={cn(
                     "fixed inset-0 bg-emerald-950/60 backdrop-blur-sm z-40 md:hidden transition-opacity duration-300",
@@ -34,22 +34,24 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 "fixed inset-y-0 left-0 z-50 w-72 bg-emerald-950 transition-transform duration-300 transform md:relative md:translate-x-0 md:z-auto h-screen overflow-hidden border-r",
                 isOpen ? "translate-x-0" : "-translate-x-full"
             )}>
-                {/* Arabic Pattern Overlay */}
+                {/* Overlay Pola Arab */}
                 <div className="absolute inset-0 arabic-pattern opacity-10 pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col h-full">
                     <div className="flex h-24 items-center justify-between px-8">
                         <Link href="/" className="flex items-center gap-4 group/logo" onClick={onClose}>
                             <div className="relative size-12 overflow-hidden rounded-2xl shadow-premium bg-white p-1 transition-transform duration-500 group-hover/logo:scale-110">
-                                <img
+                                <Image
                                     src="/logo_irmashid.png"
                                     alt="Logo IRMASHID"
+                                    width={48}
+                                    height={48}
                                     className="object-contain w-full h-full"
                                 />
                             </div>
                             <div className="flex flex-col">
                                 <span className="text-xl font-black text-white tracking-tighter leading-none">ZIS MJHR</span>
-                                <span className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest mt-1">Management System</span>
+                                <span className="text-[10px] font-bold text-emerald-400/60 uppercase tracking-widest mt-1">Sistem Manajemen</span>
                             </div>
                         </Link>
                     </div>
@@ -89,7 +91,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                             <div className="relative z-10">
                                 <p className="text-[10px] font-black text-white/90 uppercase tracking-widest mb-1 flex items-center gap-2">
                                     <MapPin className="size-3" />
-                                    Masjid Jami'
+                                    Masjid Jami&apos;
                                 </p>
                                 <p className="text-xs font-bold text-white leading-relaxed opacity-80">Hidayaturrahmah</p>
                             </div>

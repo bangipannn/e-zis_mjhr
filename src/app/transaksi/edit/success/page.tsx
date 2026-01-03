@@ -2,12 +2,12 @@
 
 import { Button } from "@/components/ui/Button"
 import { Card, CardContent } from "@/components/ui/Card"
-import { CheckCircle2, ArrowLeft, Home, History } from "lucide-react"
+import { CheckCircle2, Home, History } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+
 
 export default function EditSuccessPage() {
-    const router = useRouter()
+
 
     return (
         <div className="min-h-[80vh] flex items-center justify-center p-4">
@@ -15,7 +15,7 @@ export default function EditSuccessPage() {
                 <Card className="border-0 shadow-2xl bg-white/80 backdrop-blur-xl overflow-hidden rounded-3xl">
                     <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-emerald-400 to-teal-500" />
                     <CardContent className="p-12 text-center space-y-8">
-                        {/* Animated Icon */}
+                        {/* Ikon Animasi */}
                         <div className="relative mx-auto size-24">
                             <div className="absolute inset-0 bg-emerald-100 rounded-full animate-pulse" />
                             <div className="absolute inset-2 bg-emerald-500 rounded-full flex items-center justify-center shadow-lg shadow-emerald-200">
@@ -23,7 +23,7 @@ export default function EditSuccessPage() {
                             </div>
                         </div>
 
-                        {/* Text Content */}
+                        {/* Konten Teks */}
                         <div className="space-y-3">
                             <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
                                 Perubahan data berhasil disimpan
@@ -33,7 +33,7 @@ export default function EditSuccessPage() {
                             </p>
                         </div>
 
-                        {/* Action Buttons */}
+                        {/* Tombol Aksi */}
                         <div className="pt-6 space-y-3">
                             <Link href="/transaksi" className="block">
                                 <Button

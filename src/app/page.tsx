@@ -1,6 +1,6 @@
 import { getDashboardStats } from "@/lib/actions/dashboard_stats"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
-import { Users, Coins, TrendingUp, ShoppingBag, Wheat, Wallet, HeartHandshake, UserCheck } from "lucide-react"
+import { Coins, TrendingUp, Wheat, Wallet, HeartHandshake, UserCheck } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { DashboardDateFilter } from "@/components/dashboard/DashboardDateFilter"
 import { DashboardChart } from "@/components/dashboard/DashboardChart"
@@ -20,7 +20,7 @@ export default async function DashboardPage(props: {
   // Ambil data statistik berdasarkan filter tanggal
   const stats = await getDashboardStats(startDate, endDate)
 
-  // Format stats for UI cards
+  // Format statistik untuk kartu UI
   const cards = [
     {
       title: "Uang",
@@ -79,7 +79,7 @@ export default async function DashboardPage(props: {
         <DashboardDateFilter />
       </div>
 
-      {/* Summary Cards */}
+      {/* Kartu Ringkasan */}
       <div className="grid gap-3 sm:gap-4 lg:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {cards.map((card, idx) => (
           <Card key={idx} className="overflow-hidden border-0 shadow-xl bg-white group hover:shadow-2xl transition-all duration-300">
@@ -118,14 +118,14 @@ export default async function DashboardPage(props: {
         ))}
       </div>
 
-      {/* Chart & Breakdown Grid */}
+      {/* Grid Grafik & Rincian */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
-        {/* Analytics Chart */}
+        {/* Grafik Analitik */}
         <div className="lg:col-span-12 xl:col-span-8">
           <DashboardChart data={stats.chartData || []} />
         </div>
 
-        {/* Breakdown Card */}
+        {/* Kartu Rincian */}
         <Card className="lg:col-span-12 xl:col-span-4 overflow-hidden border-0 shadow-xl bg-emerald-950 text-white relative group">
           <div className="absolute inset-0 arabic-pattern opacity-10 pointer-events-none" />
           <CardHeader className="p-6 sm:p-8 relative z-10 border-b border-white/5">

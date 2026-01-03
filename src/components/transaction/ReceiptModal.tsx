@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/Button"
 import { Printer, X } from "lucide-react"
 import { Portal } from "@/components/ui/Portal"
 
-type ReceiptData = {
+export type ReceiptData = {
     id: string
     date: string
     names: string[]

@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/Label"
 import { Card, CardContent } from "@/components/ui/Card"
 import { TransactionType } from "@prisma/client"
 import { Printer, Save, Plus, Trash2, Calculator, Loader2, ArrowLeft, History as HistoryIcon, Coins, Wheat, Wallet, UserCheck, Receipt } from "lucide-react"
+import { ReceiptData } from "./ReceiptModal"
 import { cn } from "@/lib/utils"
 import { useRouter } from "next/navigation"
 
@@ -34,7 +35,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
     const [step, setStep] = useState<"INPUT" | "SUCCESS">("INPUT")
     const [isUpdate, setIsUpdate] = useState(false)
     const [loading, setLoading] = useState(false)
-    const [receiptData, setReceiptData] = useState<any>(null)
+    const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
 
     // State formulir: Mengatur input dari user
     const [type, setType] = useState<TransactionType>(initialData?.type || "FITRAH_UANG")
@@ -51,35 +52,35 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
     const totalBayar = totalZakatUang + infaqAmount
     const kembalian = paymentAmount - totalBayar
 
-    // Handle Count Change
+    // Menangani perubahan jumlah muzakki
     useEffect(() => {
         const count = Math.max(1, muzakkiCount)
         setNames(prev => {
             const newNames = [...prev]
             if (count > prev.length) {
-                // Add empty strings
+                // Tambahkan string kosong
                 for (let i = prev.length; i < count; i++) newNames.push("")
             } else if (count < prev.length) {
-                // Trim
+                // Potong array
                 newNames.splice(count)
             }
             return newNames
         })
     }, [muzakkiCount])
 
-    // Handle Type Change Defaults - Only run on manual type change, not initial load
+    // Menangani nilai default perubahan tipe - Hanya jalan pada perubahan manual, bukan saat awal load
     useEffect(() => {
         if (!initialData) {
             if (type === "FITRAH_UANG") setAmountPerPerson(45000)
             if (type === "FITRAH_BERAS") setAmountRicePerPerson(3.5)
             if (type === "MAL") {
-                setMuzakkiCount(1) // Mal usually individual
+                setMuzakkiCount(1) // Maal biasanya individu
                 setAmountPerPerson(0)
             }
         }
     }, [type, initialData])
 
-    // Helper for currency input
+    // Helper untuk input mata uang
     const formatCurrency = (val: number) => val ? new Intl.NumberFormat("id-ID").format(val) : ""
     const parseCurrency = (val: string) => parseInt(val.replace(/\./g, "")) || 0
 
@@ -91,7 +92,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
         e.preventDefault()
         setLoading(true)
 
-        // Validate Names
+        // Validasi Nama
         if (names.some(n => !n.trim())) {
             alert("Harap isi semua nama muzakki")
             setLoading(false)
@@ -112,7 +113,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
         if (initialData?.receiptId || originalId) {
             const res = await updateBulkTransaction(initialData?.receiptId, data, originalId)
             if (res.success) {
-                // Redirect to handle success on a stable page (avoid 404 on current dynamic ID)
+                // Redirect untuk menangani sukses pada halaman stabil (mencegah 404 pada ID dinamis saat ini)
                 router.push(`/transaksi?success=updated&receiptId=${res.receiptId}`)
             } else {
                 alert("Gagal memperbarui transaksi")
@@ -123,7 +124,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
             if (res.success) {
                 setIsUpdate(false)
                 setReceiptData({
-                    id: res.receiptId,
+                    id: res.receiptId as string,
                     date: new Date().toLocaleString("id-ID"),
                     names,
                     type,
@@ -156,6 +157,8 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
     }
 
     if (step === "SUCCESS") {
+        if (!receiptData) return null
+
         return (
             <div className="max-w-xl mx-auto space-y-6">
                 <div className={`p-6 rounded-3xl text-center shadow-lg border animate-in fade-in zoom-in duration-500 ${isUpdate ? 'bg-blue-50 border-blue-100 text-blue-900 shadow-blue-100' : 'bg-emerald-50 border-emerald-100 text-emerald-900 shadow-emerald-100'}`}>
@@ -166,12 +169,12 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                     <p className="opacity-70 font-medium">{isUpdate ? "Data transaksi telah diperbarui dan struk sudah siap dicetak ulang." : "Transaksi baru telah dicatat ke dalam sistem."}</p>
                 </div>
 
-                {/* Printable Area */}
+                {/* Area Cetak */}
                 <Card className="print-section border-2 border-dashed border-gray-300">
                     <CardContent className="p-8 space-y-4 font-mono text-sm">
                         <div className="text-center border-b pb-4 mb-4">
                             <h3 className="font-bold text-lg">ZIS MJHR</h3>
-                            <p>Masjid Jami' Hidayaturrahmah</p>
+                            <p>Masjid Jami&apos; Hidayaturrahmah</p>
                             <p className="text-xs text-gray-500">{receiptData.date}</p>
                             <p className="text-xs text-gray-500">ID: {receiptData.id?.split('-')[0]}</p>
                         </div>

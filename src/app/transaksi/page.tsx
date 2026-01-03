@@ -1,6 +1,6 @@
 import { getTransactions } from "@/lib/actions/transaction"
 import { Button } from "@/components/ui/Button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card"
+import { Card, CardContent } from "@/components/ui/Card"
 import Link from "next/link"
 import { CreditCard, Plus } from "lucide-react"
 import TransactionRowActions from "@/components/transaction/TransactionRowActions"

@@ -26,12 +26,12 @@ export default async function EditTransactionPage({ params }: EditTransactionPag
         transactions = [transaction]
     }
 
-    // Separate Infaq and Zakat transactions
+    // Pisahkan transaksi Infaq dan Zakat
     const infaqTx = transactions.find(t => t.type === 'INFAQ')
     const zakatTxs = transactions.filter(t => t.type !== 'INFAQ')
 
     if (zakatTxs.length === 0) {
-        // This shouldn't happen for a valid transaction group, but handle it
+        // Ini seharusnya tidak terjadi untuk grup transaksi yang valid, tapi tetap ditangani
         notFound()
     }
 

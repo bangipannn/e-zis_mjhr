@@ -4,9 +4,9 @@ import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { Card, CardContent } from "@/components/ui/Card"
 import { Button } from "@/components/ui/Button"
-import { CheckCircle2, Printer, ArrowLeft, Loader2, Save, History as HistoryIcon } from "lucide-react"
+import { Printer, Loader2, Save, History as HistoryIcon } from "lucide-react"
 import { getTransactionsByReceiptId } from "@/lib/actions/transaction"
-import ReceiptModal from "./ReceiptModal"
+import ReceiptModal, { ReceiptData } from "./ReceiptModal"
 import { Portal } from "@/components/ui/Portal"
 
 export default function SuccessModal() {
@@ -17,7 +17,7 @@ export default function SuccessModal() {
 
     const [isOpen, setIsOpen] = useState(false)
     const [isPrinting, setIsPrinting] = useState(false)
-    const [receiptData, setReceiptData] = useState<any>(null)
+    const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
     const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false)
 
     useEffect(() => {
@@ -28,7 +28,7 @@ export default function SuccessModal() {
 
     const handleClose = () => {
         setIsOpen(false)
-        // Clean up URL params
+        // Bersihkan parameter URL
         const params = new URLSearchParams(searchParams.toString())
         params.delete("success")
         params.delete("receiptId")
@@ -47,7 +47,7 @@ export default function SuccessModal() {
             return
         }
 
-        // Aggregate data for receipt
+        // Agregasi data untuk struk
         const first = transactions[0]
         const names = transactions.map((t: any) => t.muzakkiName).filter(Boolean)
         const totalZakatUang = transactions.filter((t: any) => t.type !== "FITRAH_BERAS" && t.type !== "INFAQ").reduce((acc: number, curr: any) => acc + curr.amount, 0)

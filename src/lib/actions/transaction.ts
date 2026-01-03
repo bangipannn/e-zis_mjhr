@@ -26,7 +26,7 @@ export async function getTransactions(
     pageSize: number = 10
 ) {
     try {
-        const where: any = {}
+        const where: Record<string, any> = {}
         if (startDate || endDate) {
             where.createdAt = {}
             if (startDate) where.createdAt.gte = new Date(startDate)
@@ -116,7 +116,7 @@ export async function getTransactions(
             }
         }
     } catch (error) {
-        console.error("Failed to fetch transactions:", error)
+        console.error("Gagal mengambil data transaksi:", error)
         return {
             data: [],
             metadata: { total: 0, totalPages: 0, currentPage: 1, pageSize: 10 }
@@ -144,7 +144,7 @@ export async function createTransaction(data: TransactionData) {
         revalidatePath("/") // Perbarui statistik di dashboard
         return { success: true }
     } catch (error) {
-        console.error("Create transaction error:", error)
+        console.error("Error saat mencatat transaksi:", error)
         return { success: false, error: "Gagal mencatat transaksi" }
     }
 }
@@ -154,7 +154,7 @@ export async function getTransactionById(id: number) {
             where: { id },
         })
     } catch (error) {
-        console.error("Failed to fetch transaction:", error)
+        console.error("Gagal mengambil data transaksi berdasarkan ID:", error)
         return null
     }
 }
@@ -165,7 +165,7 @@ export async function getTransactionsByReceiptId(receiptId: string) {
             where: { receiptId },
         })
     } catch (error) {
-        console.error("Failed to fetch transactions by receiptId:", error)
+        console.error("Gagal mengambil data transaksi berdasarkan receiptId:", error)
         return []
     }
 }
@@ -191,7 +191,7 @@ export async function updateTransaction(id: number, data: TransactionData) {
         revalidatePath("/")
         return { success: true }
     } catch (error) {
-        console.error("Update transaction error:", error)
+        console.error("Error saat memperbarui transaksi:", error)
         return { success: false, error: "Gagal memperbarui data" }
     }
 }
@@ -206,7 +206,7 @@ export async function deleteTransaction(id: number) {
         return { success: true }
     } catch (error) {
         console.error(error)
-        return { success: false, error: "Failed to delete transaction" }
+        return { success: false, error: "Gagal menghapus transaksi" }
     }
 }
 
@@ -219,7 +219,7 @@ export async function deleteTransactionsByReceiptId(receiptId: string) {
         revalidatePath("/")
         return { success: true }
     } catch (error) {
-        console.error("Failed to delete bulk transactions:", error)
+        console.error("Gagal menghapus grup transaksi:", error)
         return { success: false, error: "Gagal menghapus grup transaksi" }
     }
 }
