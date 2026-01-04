@@ -15,8 +15,8 @@ export function TransactionSearch() {
     const searchParams = useSearchParams()
 
     const [text, setText] = useState(searchParams.get("query") || "")
-    // Debounce: Tunggu 500ms setelah user berhenti mengetik sebelum memproses pencarian
-    const [query] = useDebounce(text, 500)
+    // Debounce: Tunggu 300ms setelah user berhenti mengetik sebelum memproses pencarian
+    const [query] = useDebounce(text, 300)
 
     useEffect(() => {
         const currentQuery = searchParams.get("query") || ""
@@ -40,7 +40,7 @@ export function TransactionSearch() {
                 type="text"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Cari ID Kwitansi atau Nama Pembayar..."
+                placeholder="Cari ID Kwitansi atau Nama Muzakki..."
                 className="w-full h-14 pl-14 pr-12 rounded-2xl bg-white shadow-lg border border-gray-100 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none font-bold text-emerald-950 placeholder:text-gray-300 placeholder:font-bold"
             />
             {text && (

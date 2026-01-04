@@ -74,10 +74,10 @@ export function DashboardChart({ data }: DashboardChartProps) {
                                     if (String(name) === "total") {
                                         return [
                                             new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(val),
-                                            'Total Uang'
+                                            'Total Saldo Masuk'
                                         ]
                                     }
-                                    return [`${val} L`, 'Zakat Beras']
+                                    return [`${val} L`, 'Total Zakat Beras']
                                 }}
                             />
                             <Area

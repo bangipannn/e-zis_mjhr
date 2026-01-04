@@ -62,8 +62,11 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
                             <Card className="print-section border-0 shadow-sm rounded-2xl overflow-hidden bg-white ring-1 ring-slate-200/60 print:ring-0 print:shadow-none print:rounded-none">
                                 <CardContent className="p-8 space-y-6 font-mono text-sm text-slate-600 print:p-4">
                                     <div className="text-center border-b border-slate-100 pb-6 mb-2 print:pb-4">
-                                        <h3 className="font-black text-xl text-emerald-600 tracking-tighter">ZIS MJHR</h3>
+                                        <h3 className="font-black text-xl text-emerald-600 tracking-tighter">Panitia ZIS MJHR</h3>
                                         <p className="font-bold text-slate-800">Masjid Jami' Hidayaturrahmah</p>
+                                        <p>Jl. Bhakti ABRI No. 1 RT.001/RW.04</p>
+                                        <p>Kel. Pegangsaan Dua Kec. Kelapa Gading</p>
+                                        <p>Jakarta Utara - 14250</p>
                                         <p className="text-[10px] text-slate-400 mt-1 uppercase tracking-widest">{data.date}</p>
                                         <p className="text-[10px] font-bold text-emerald-500 bg-emerald-50 inline-block px-2 py-0.5 rounded-full mt-2 print:border print:border-emerald-200">
                                             ID: {data.id?.split('-')[0]}
@@ -82,7 +85,7 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
                                         </div>
                                         <div className="flex justify-between items-center pt-2 border-t border-slate-50">
                                             <span className="text-slate-400">Muzakki:</span>
-                                            <span className="font-bold text-slate-800">{Array.from(new Set(data.names)).length} Orang</span>
+                                            <span className="font-bold text-slate-800">{Array.from(new Set(data.names)).length} Jiwa</span>
                                         </div>
                                         <ul className="pl-4 space-y-1">
                                             {Array.from(new Set(data.names)).map((n: string, i: number) => (
@@ -111,7 +114,7 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
                                             <span className="font-bold text-slate-800">Rp {new Intl.NumberFormat("id-ID").format(data.infaqAmount)}</span>
                                         </div>
                                         <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-                                            <span className="font-bold text-slate-800">Total Pembayaran</span>
+                                            <span className="font-bold text-slate-800">Total</span>
                                             <span className="font-black text-lg text-emerald-600">
                                                 Rp {new Intl.NumberFormat("id-ID").format(data.totalBayar)}
                                             </span>
@@ -120,7 +123,7 @@ export default function ReceiptModal({ isOpen, onClose, data }: ReceiptModalProp
 
                                     <div className="space-y-1.5 pt-2 bg-slate-50/50 p-4 rounded-xl print:bg-transparent print:border print:border-slate-100">
                                         <div className="flex justify-between text-xs text-slate-400">
-                                            <span>DIBAYAR</span>
+                                            <span>Uang Diterima</span>
                                             <span className="font-bold text-slate-600">
                                                 Rp {new Intl.NumberFormat("id-ID").format(data.paymentAmount || data.totalBayar)}
                                             </span>

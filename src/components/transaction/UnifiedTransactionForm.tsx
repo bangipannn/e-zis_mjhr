@@ -43,7 +43,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
     const [type, setType] = useState<TransactionType>(initialData?.type || "FITRAH_UANG")
     const [muzakkiCount, setMuzakkiCount] = useState(initialData?.muzakkiCount || 1)
     const [names, setNames] = useState<string[]>(initialData?.names || [""])
-    const [amountPerPerson, setAmountPerPerson] = useState(initialData?.amountPerPerson ?? 45000)
+    const [amountPerPerson, setAmountPerPerson] = useState(initialData?.amountPerPerson ?? 40000)
     const [amountRicePerPerson, setAmountRicePerPerson] = useState(initialData?.amountRicePerPerson ?? 3.5)
     const [infaqAmount, setInfaqAmount] = useState(initialData?.infaqAmount || 0)
     const [paymentAmount, setPaymentAmount] = useState(initialData?.paymentAmount || 0)
@@ -73,7 +73,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
     // Menangani nilai default perubahan tipe - Hanya jalan pada perubahan manual, bukan saat awal load
     useEffect(() => {
         if (!initialData) {
-            if (type === "FITRAH_UANG") setAmountPerPerson(45000)
+            if (type === "FITRAH_UANG") setAmountPerPerson(40000)
             if (type === "FITRAH_BERAS") setAmountRicePerPerson(3.5)
             if (type === "MAL") {
                 setMuzakkiCount(1) // Maal biasanya individu
@@ -182,10 +182,13 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                 <Card className="print-section border-2 border-dashed border-gray-300">
                     <CardContent className="p-8 space-y-4 font-mono text-sm">
                         <div className="text-center border-b pb-4 mb-4">
-                            <h3 className="font-bold text-lg">ZIS MJHR</h3>
+                            <h3 className="font-bold text-lg">Panitia ZIS MJHR</h3>
                             <p>Masjid Jami&apos; Hidayaturrahmah</p>
-                            <p className="text-xs text-gray-500">{receiptData.date}</p>
-                            <p className="text-xs text-gray-500">ID: {receiptData.id?.split('-')[0]}</p>
+                            <p>Jl. Bhakti ABRI No. 1 RT.001/RW.04</p>
+                            <p>Kel. Pegangsaan Dua Kec. Kelapa Gading</p>
+                            <p>Jakarta Utara - 14250</p>
+                            <h4 className="font-bold text-xs text-gray-500">{receiptData.date}</h4>
+                            <h4 className="font-bold text-xs text-gray-500">ID: {receiptData.id?.split('-')[0]}</h4>
                         </div>
 
                         <div className="space-y-1">
@@ -197,7 +200,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                             }</p>
                             <div className="flex justify-between">
                                 <span>Muzakki:</span>
-                                <span>{Array.from(new Set(receiptData.names as string[])).length} Orang</span>
+                                <span>{Array.from(new Set(receiptData.names as string[])).length} Jiwa</span>
                             </div>
                             <ul className="pl-4 list-disc text-xs text-gray-600">
                                 {Array.from(new Set(receiptData.names as string[])).map((n: string, i: number) => <li key={i}>{n}</li>)}
@@ -222,14 +225,14 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                                 <span>{new Intl.NumberFormat("id-ID").format(receiptData.infaqAmount)}</span>
                             </div>
                             <div className="flex justify-between font-bold text-lg pt-2 border-t border-dashed">
-                                <span>Total Pembayaran</span>
+                                <span>Total</span>
                                 <span>{new Intl.NumberFormat("id-ID").format(receiptData.totalBayar)}</span>
                             </div>
                         </div>
 
                         <div className="space-y-1 pt-2">
                             <div className="flex justify-between">
-                                <span>Bayar</span>
+                                <span>Uang Diterima</span>
                                 <span>{new Intl.NumberFormat("id-ID").format(receiptData.paymentAmount)}</span>
                             </div>
                             <div className="flex justify-between font-bold">
@@ -238,9 +241,9 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                             </div>
                         </div>
 
-                        <div className="text-center pt-8 text-xs text-gray-400">
-                            <p>Terima kasih atas Zakat/Infaq Anda.</p>
-                            <p>Semoga berkah dan diterima Allah SWT.</p>
+                        <div className="text-center pt-6 space-y-1 border-t border-slate-50">
+                            <p className="text-[10px] font-bold text-slate-800">Terima kasih atas Zakat/Infaq Anda.</p>
+                            <p className="text-[10px] text-slate-400 italic">Semoga berkah dan diterima Allah SWT.</p>
                         </div>
                     </CardContent>
                 </Card>
@@ -332,8 +335,8 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                                     <UserCheck className="size-5 sm:size-6" />
                                 </div>
                                 <div className="min-w-0">
-                                    <h3 className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight truncate">Data Pembayar</h3>
-                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 truncate">Nama pembayar {type.includes('FITRAH') ? 'zakat' : 'mal'}</p>
+                                    <h3 className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight truncate">Data Muzakki</h3>
+                                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 truncate">Nama Muzakki {type.includes('FITRAH') ? 'zakat' : 'mal'}</p>
                                 </div>
                             </div>
 
@@ -373,7 +376,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                                         {(idx + 1).toString().padStart(2, '0')}
                                     </div>
                                     <Input
-                                        placeholder={`Nama Pembayar ${idx + 1}...`}
+                                        placeholder={`Nama Muzakki ${idx + 1}...`}
                                         value={name}
                                         onChange={(e) => {
                                             const newNames = [...names]
@@ -398,7 +401,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                             </div>
                             <div className="min-w-0">
                                 <h3 className="text-lg sm:text-xl font-black text-emerald-950 tracking-tight truncate">Kalkulasi Nominal</h3>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1 truncate">Sesuaikan nominal per jiwa</p>
+                                <p className="text-[10px] font-bold text-red-400 uppercase tracking-widest mt-1 truncate">Warning! Sesuaikan nominal (Input manual)</p>
                             </div>
                         </div>
 
@@ -486,7 +489,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
 
                             <div className="space-y-6">
                                 <div className="flex justify-between items-center group/item">
-                                    <span className="text-emerald-100/60 font-medium text-sm">Zakat ({names.length} Orang)</span>
+                                    <span className="text-emerald-100/60 font-medium text-sm">Zakat ({names.length} Jiwa)</span>
                                     <span className="text-xl font-black tracking-tight group-hover:text-emerald-400 transition-colors">
                                         {type === "FITRAH_BERAS"
                                             ? `${totalZakatBeras} L`
@@ -505,7 +508,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
 
                                 <div className="flex justify-between items-end">
                                     <div className="space-y-1">
-                                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Total Tagihan</span>
+                                        <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Total</span>
                                         <p className="text-sm text-emerald-100/40">Zakat & Infaq Terakumulasi</p>
                                     </div>
                                     <div className="text-right">
@@ -580,7 +583,7 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                 isOpen={showAlert}
                 onClose={() => setShowAlert(false)}
                 onConfirm={() => setShowAlert(false)}
-                variant="warning"
+                variant="Warning!"
                 title="Pembayaran Kurang"
                 description="Harap isi nominal uang yang diterima dengan benar sebelum melanjutkan."
                 confirmText="Ok, Saya Mengerti"

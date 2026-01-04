@@ -74,7 +74,7 @@ export default async function DashboardPage(props: {
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
         <div>
           <h1 className="text-3xl sm:text-5xl font-black text-emerald-950 tracking-tight">Dashboard</h1>
-          <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Ringkasan Statistik Real-time</p>
+          <p className="text-[10px] sm:text-xs font-bold text-gray-400 uppercase tracking-[0.3em] mt-2">Ringkasan Real-time</p>
         </div>
         <DashboardDateFilter />
       </div>
@@ -142,7 +142,7 @@ export default async function DashboardPage(props: {
                 { label: "Zakat Fitrah (Uang)", value: stats.breakdown.FITRAH_UANG, icon: Coins, color: "text-emerald-400" },
                 { label: "Zakat Fitrah (Beras)", value: `${stats.breakdown.FITRAH_BERAS} L`, icon: Wheat, color: "text-blue-400" },
                 { label: "Zakat Mal", value: stats.breakdown.MAL, icon: Wallet, color: "text-amber-400" },
-                { label: "Infaq & Sedekah", value: stats.breakdown.INFAQ + (stats.breakdown.SODAQOH || 0), icon: HeartHandshake, color: "text-pink-400" }
+                { label: "Infaq/Sedekah", value: stats.breakdown.INFAQ + (stats.breakdown.SODAQOH || 0), icon: HeartHandshake, color: "text-pink-400" }
               ].map((item, idx) => (
                 <div key={idx} className="flex items-center justify-between p-3 sm:p-4 rounded-3xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors group/item">
                   <div className="flex items-center gap-3 sm:gap-4 min-w-0">
