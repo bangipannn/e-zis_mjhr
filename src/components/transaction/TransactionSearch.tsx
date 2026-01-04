@@ -42,6 +42,7 @@ export function TransactionSearch() {
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Cari ID Kwitansi atau Nama Muzakki..."
                 className="w-full h-14 pl-14 pr-12 rounded-2xl bg-white shadow-lg border border-gray-100 focus:ring-4 focus:ring-emerald-500/10 focus:border-emerald-500 transition-all outline-none font-bold text-emerald-950 placeholder:text-gray-300 placeholder:font-bold"
+                suppressHydrationWarning={true}
             />
             {text && (
                 <button

@@ -7,17 +7,47 @@ import { deleteTransaction, deleteTransactionsByReceiptId, getTransactionsByRece
 import ReceiptModal from "./ReceiptModal"
 import { AlertDialog } from "@/components/ui/AlertDialog"
 import Link from "next/link"
+import { cn } from "@/lib/utils"
 
 interface TransactionRowActionsProps {
     transaction: any
+    currentUserRole?: 'ADMINISTRATOR' | 'PANITIA_ZIS'
 }
 
-export default function TransactionRowActions({ transaction }: TransactionRowActionsProps) {
+export default function TransactionRowActions({ transaction, currentUserRole }: TransactionRowActionsProps) {
     const [isDeleting, setIsDeleting] = useState(false)
     const [isPrinting, setIsPrinting] = useState(false)
     const [receiptData, setReceiptData] = useState<any>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+
+    // State for generic alerts (Validation, Error, Logic)
+    const [alertState, setAlertState] = useState({
+        isOpen: false,
+        title: "",
+        description: "",
+        variant: "default" as "default" | "destructive" | "warning"
+    })
+
+    const closeAlert = () => setAlertState(prev => ({ ...prev, isOpen: false }))
+
+    const showAccessDenied = () => {
+        setAlertState({
+            isOpen: true,
+            title: "Akses Ditolak",
+            description: "Hanya Administrator yang memiliki izin untuk menghapus data transaksi ini.",
+            variant: "destructive"
+        })
+    }
+
+    const showLoginRequired = () => {
+        setAlertState({
+            isOpen: true,
+            title: "Login Diperlukan",
+            description: "Anda harus login terlebih dahulu untuk melakukan tindakan ini.",
+            variant: "warning"
+        })
+    }
 
     const handleDelete = async () => {
         setIsDeleting(true)
@@ -26,7 +56,12 @@ export default function TransactionRowActions({ transaction }: TransactionRowAct
             : await deleteTransaction(transaction.id)
 
         if (!res.success) {
-            alert(res.error || "Gagal menghapus transaksi")
+            setAlertState({
+                isOpen: true,
+                title: "Gagal Menghapus",
+                description: res.error || "Terjadi kesalahan saat menghapus transaksi.",
+                variant: "destructive"
+            })
             setIsDeleting(false)
             setIsDeleteDialogOpen(false)
         } else {
@@ -35,7 +70,31 @@ export default function TransactionRowActions({ transaction }: TransactionRowAct
         }
     }
 
+    const onEditClick = (e: React.MouseEvent) => {
+        if (!currentUserRole) {
+            e.preventDefault()
+            showLoginRequired()
+        }
+    }
+
+    const onDeleteClick = () => {
+        if (!currentUserRole) {
+            showLoginRequired()
+            return
+        }
+        if (currentUserRole !== 'ADMINISTRATOR') {
+            showAccessDenied()
+            return
+        }
+        setIsDeleteDialogOpen(true)
+    }
+
     const handlePrint = async () => {
+        if (!currentUserRole) {
+            showLoginRequired()
+            return
+        }
+
         setIsPrinting(true)
 
         let transactions = []
@@ -46,7 +105,12 @@ export default function TransactionRowActions({ transaction }: TransactionRowAct
         }
 
         if (transactions.length === 0) {
-            alert("Gagal memuat data cetak")
+            setAlertState({
+                isOpen: true,
+                title: "Data Tidak Ditemukan",
+                description: "Gagal memuat data transaksi untuk dicetak. Silahkan coba lagi.",
+                variant: "destructive"
+            })
             setIsPrinting(false)
             return
         }
@@ -81,18 +145,25 @@ export default function TransactionRowActions({ transaction }: TransactionRowAct
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                asChild
+                className={cn("size-8 hover:bg-blue-50", !currentUserRole ? "text-gray-300 hover:text-gray-400" : "text-blue-600 hover:text-blue-700")}
+                asChild={!!currentUserRole}
+                onClick={!currentUserRole ? onEditClick : undefined}
             >
-                <Link href={`/transaksi/${transaction.id}/edit`}>
-                    <Edit2 className="size-4" />
-                </Link>
+                {currentUserRole ? (
+                    <Link href={`/transaksi/${transaction.id}/edit`}>
+                        <Edit2 className="size-4" />
+                    </Link>
+                ) : (
+                    <div className="cursor-pointer">
+                        <Edit2 className="size-4" />
+                    </div>
+                )}
             </Button>
 
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                className={cn("size-8 hover:bg-emerald-50", !currentUserRole ? "text-gray-300 hover:text-gray-400" : "text-emerald-600 hover:text-emerald-700")}
                 onClick={handlePrint}
                 disabled={isPrinting}
             >
@@ -102,8 +173,8 @@ export default function TransactionRowActions({ transaction }: TransactionRowAct
             <Button
                 variant="ghost"
                 size="icon"
-                className="size-8 text-red-600 hover:text-red-700 hover:bg-red-50"
-                onClick={() => setIsDeleteDialogOpen(true)}
+                className={cn("size-8 hover:bg-red-50", !currentUserRole || currentUserRole !== 'ADMINISTRATOR' ? "text-gray-300 hover:text-gray-400" : "text-red-600 hover:text-red-700")}
+                onClick={onDeleteClick}
                 disabled={isDeleting}
             >
                 {isDeleting ? <Loader2 className="size-4 animate-spin" /> : <Trash2 className="size-4" />}
@@ -115,6 +186,7 @@ export default function TransactionRowActions({ transaction }: TransactionRowAct
                 data={receiptData}
             />
 
+            {/* Confirmation Dialog for Deletion */}
             <AlertDialog
                 isOpen={isDeleteDialogOpen}
                 onClose={() => setIsDeleteDialogOpen(false)}
@@ -127,6 +199,18 @@ export default function TransactionRowActions({ transaction }: TransactionRowAct
                 confirmText="Ya, Hapus"
                 cancelText="Batal"
                 variant="destructive"
+            />
+
+            {/* Generic Alert Dialog (Access Denied, Login Required, etc) */}
+            <AlertDialog
+                isOpen={alertState.isOpen}
+                onClose={closeAlert}
+                onConfirm={closeAlert}
+                title={alertState.title}
+                description={alertState.description}
+                confirmText="Mengerti"
+                cancelText="Tutup"
+                variant={alertState.variant}
             />
         </div>
     )

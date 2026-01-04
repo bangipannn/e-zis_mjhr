@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import { ArrowLeft, Edit } from "lucide-react"
 import { notFound } from "next/navigation"
+import { getSession } from "@/lib/auth/session"
 
 interface EditTransactionPageProps {
     params: Promise<{
@@ -13,6 +14,7 @@ interface EditTransactionPageProps {
 
 export default async function EditTransactionPage({ params }: EditTransactionPageProps) {
     const { id } = await params
+    const session = await getSession()
     const transaction = await getTransactionById(parseInt(id))
 
     if (!transaction) {
@@ -71,7 +73,7 @@ export default async function EditTransactionPage({ params }: EditTransactionPag
             </div>
 
             <div className="p-1">
-                <UnifiedTransactionForm initialData={initialData} originalId={transaction.id} />
+                <UnifiedTransactionForm initialData={initialData} originalId={transaction.id} currentUserRole={session?.role} />
             </div>
         </div>
     )

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { TransactionType } from "@prisma/client"
 import { randomUUID } from "crypto"
+import { getSession } from "@/lib/auth/session"
 
 export type BulkTransactionData = {
     type: TransactionType
@@ -21,6 +22,11 @@ export type BulkTransactionData = {
  * Menggunakan $transaction untuk memastikan atomisitas data (semua tersimpan atau tidak sama sekali).
  */
 export async function createBulkTransaction(data: BulkTransactionData) {
+    const session = await getSession()
+    if (!session || (session.role !== 'ADMINISTRATOR' && session.role !== 'PANITIA_ZIS')) {
+        return { success: false, error: "Anda tidak memiliki akses untuk mencatat transaksi." }
+    }
+
     const receiptId = randomUUID() // Unique ID for this batch
 
     try {
@@ -35,7 +41,9 @@ export async function createBulkTransaction(data: BulkTransactionData) {
                         receiptId: receiptId,
                         muzakkiName: name,
                         paymentAmount: data.paymentAmount,
-                        kembalian: data.kembalian
+                        kembalian: data.kembalian,
+                        createdById: session.userId,
+                        updatedById: session.userId
                     } as any
                 });
             }
@@ -50,7 +58,9 @@ export async function createBulkTransaction(data: BulkTransactionData) {
                         receiptId: receiptId,
                         muzakkiName: data.muzakkiNames[0] || "Hamba Allah",
                         paymentAmount: data.paymentAmount,
-                        kembalian: data.kembalian
+                        kembalian: data.kembalian,
+                        createdById: session.userId,
+                        updatedById: session.userId
                     } as any
                 })
             }
@@ -71,6 +81,11 @@ export async function createBulkTransaction(data: BulkTransactionData) {
  * Menjamin integritas data menggunakan database transaction.
  */
 export async function updateBulkTransaction(receiptId: string | null | undefined, data: BulkTransactionData, originalId?: number) {
+    const session = await getSession()
+    if (!session || (session.role !== 'ADMINISTRATOR' && session.role !== 'PANITIA_ZIS')) {
+        return { success: false, error: "Anda tidak memiliki akses untuk mengubah transaksi." }
+    }
+
     try {
         let finalReceiptId = receiptId || randomUUID();
 
@@ -93,7 +108,9 @@ export async function updateBulkTransaction(receiptId: string | null | undefined
                         receiptId: finalReceiptId,
                         muzakkiName: name,
                         paymentAmount: data.paymentAmount,
-                        kembalian: data.kembalian
+                        kembalian: data.kembalian,
+                        createdById: session.userId,
+                        updatedById: session.userId
                     } as any
                 });
             }
@@ -107,7 +124,9 @@ export async function updateBulkTransaction(receiptId: string | null | undefined
                         receiptId: finalReceiptId,
                         muzakkiName: data.muzakkiNames[0] || "Hamba Allah",
                         paymentAmount: data.paymentAmount,
-                        kembalian: data.kembalian
+                        kembalian: data.kembalian,
+                        createdById: session.userId,
+                        updatedById: session.userId
                     } as any
                 })
             }

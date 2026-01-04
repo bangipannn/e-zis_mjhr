@@ -43,8 +43,10 @@ export async function getDashboardStats(startDate?: string, endDate?: string) {
         }
 
         // Siapkan data untuk grafik 7 hari terakhir
-        const dailyDataMap: Record<string, number> = {}
-        const dailyRiceMap: Record<string, number> = {}
+        const dailyFitrahUangMap: Record<string, number> = {}
+        const dailyFitrahBerasMap: Record<string, number> = {}
+        const dailyMalMap: Record<string, number> = {}
+
         const last7Days = Array.from({ length: 7 }, (_, i) => {
             const date = new Date()
             date.setDate(date.getDate() - i)
@@ -53,32 +55,39 @@ export async function getDashboardStats(startDate?: string, endDate?: string) {
 
         // Initialize map
         last7Days.forEach(day => {
-            dailyDataMap[day] = 0
-            dailyRiceMap[day] = 0
+            dailyFitrahUangMap[day] = 0
+            dailyFitrahBerasMap[day] = 0
+            dailyMalMap[day] = 0
         })
 
         transactions.forEach(t => {
             if (t.amount) totalUang += t.amount
             if (t.amount_rice) totalBeras += t.amount_rice
 
-            // Kelompokkan nominal berdasarkan tipe transaksi
+            // Kelompokkan nominal berdasarkan tipe transaksi global stats
             if (t.type in breakdown) {
                 // @ts-ignore
                 breakdown[t.type] += (t.type === 'FITRAH_BERAS' ? (t.amount_rice || 0) : t.amount)
             }
 
-            // Akumulasi data harian untuk grafik (hanya jika tanggal masuk dalam 7 hari terakhir)
+            // Akumulasi data harian per kategori untuk grafik
             const day = (t as any).createdAt.toISOString().split('T')[0]
-            if (day in dailyDataMap) {
-                dailyDataMap[day] += (t.amount || 0)
-                dailyRiceMap[day] += (t.amount_rice || 0)
+            if (day in dailyFitrahUangMap) {
+                if (t.type === 'FITRAH_UANG') {
+                    dailyFitrahUangMap[day] += (t.amount || 0)
+                } else if (t.type === 'FITRAH_BERAS') {
+                    dailyFitrahBerasMap[day] += (t.amount_rice || 0)
+                } else if (t.type === 'MAL') {
+                    dailyMalMap[day] += (t.amount || 0)
+                }
             }
         })
 
         const chartData = last7Days.map(day => ({
             date: new Intl.DateTimeFormat('id-ID', { day: '2-digit', month: 'short' }).format(new Date(day)),
-            total: dailyDataMap[day],
-            rice: dailyRiceMap[day]
+            fitrahUang: dailyFitrahUangMap[day],
+            fitrahBeras: dailyFitrahBerasMap[day],
+            mal: dailyMalMap[day]
         }))
 
         return {

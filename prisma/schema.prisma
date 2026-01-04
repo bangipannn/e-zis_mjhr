@@ -8,6 +8,7 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+
 model Transaction {
   id          Int      @id @default(autoincrement())
   type        TransactionType
@@ -15,10 +16,33 @@ model Transaction {
   amount_rice Float?
   description String?
   muzakkiName String
-  receiptId   String?  // Optional for backward compatibility, but generated for new ones
+  receiptId   String?
   paymentAmount Float?
   kembalian     Float?
   createdAt   DateTime @default(now())
+  
+  // Relations
+  createdById String?  @db.Uuid
+  createdBy   User?    @relation("CreatedTransactions", fields: [createdById], references: [id])
+  updatedById String?  @db.Uuid
+  updatedBy   User?    @relation("UpdatedTransactions", fields: [updatedById], references: [id])
+}
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username      String    @unique
+  nama_lengkap  String
+  password_hash String
+  role          Role      @default(PANITIA_ZIS)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
+
+  // Relations
+  createdTransactions Transaction[] @relation("CreatedTransactions")
+  updatedTransactions Transaction[] @relation("UpdatedTransactions")
+
+  @@index([role])
+  @@map("users")
 }
 
 enum TransactionType {
@@ -27,4 +51,9 @@ enum TransactionType {
   MAL
   INFAQ
   SODAQOH
+}
+
+enum Role {
+  ADMINISTRATOR
+  PANITIA_ZIS
 }

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button"
 import { Printer, Loader2, Save, History as HistoryIcon } from "lucide-react"
 import { getTransactionsByReceiptId } from "@/lib/actions/transaction"
 import ReceiptModal, { ReceiptData } from "./ReceiptModal"
+import { AlertDialog } from "@/components/ui/AlertDialog"
 import { Portal } from "@/components/ui/Portal"
 
 export default function SuccessModal() {
@@ -19,6 +20,16 @@ export default function SuccessModal() {
     const [isPrinting, setIsPrinting] = useState(false)
     const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
     const [isReceiptModalOpen, setIsReceiptModalOpen] = useState(false)
+
+    // Generic Alert Config
+    const [alertConfig, setAlertConfig] = useState({
+        isOpen: false,
+        title: "",
+        description: "",
+        variant: "default" as "default" | "destructive" | "warning"
+    })
+
+    const closeAlert = () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
 
     useEffect(() => {
         if (isSuccess && receiptId) {
@@ -42,7 +53,12 @@ export default function SuccessModal() {
         const transactions = await getTransactionsByReceiptId(receiptId)
 
         if (transactions.length === 0) {
-            alert("Gagal memuat data cetak")
+            setAlertConfig({
+                isOpen: true,
+                title: "Data Tidak Ditemukan",
+                description: "Gagal memuat data transaksi untuk dicetak. Silahkan coba lagi.",
+                variant: "destructive"
+            })
             setIsPrinting(false)
             return
         }
@@ -120,6 +136,17 @@ export default function SuccessModal() {
                 isOpen={isReceiptModalOpen}
                 onClose={() => setIsReceiptModalOpen(false)}
                 data={receiptData}
+            />
+
+            <AlertDialog
+                isOpen={alertConfig.isOpen}
+                onClose={closeAlert}
+                onConfirm={closeAlert}
+                title={alertConfig.title}
+                description={alertConfig.description}
+                variant={alertConfig.variant}
+                confirmText="Mengerti"
+                cancelText="Tutup"
             />
         </Portal>
     )

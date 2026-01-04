@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { TransactionType } from "@prisma/client"
+import { getSession } from "@/lib/auth/session"
 
 export type TransactionData = {
     type: TransactionType
@@ -47,6 +48,13 @@ export async function getTransactions(
         const rawTransactions = await prisma.transaction.findMany({
             where,
             orderBy: { createdAt: "desc" },
+            include: {
+                createdBy: {
+                    select: {
+                        nama_lengkap: true
+                    }
+                }
+            }
         })
 
         // Logika Pengelompokan: Menggabungkan transaksi dengan receiptId yang sama
@@ -54,6 +62,8 @@ export async function getTransactions(
         const singles: any[] = []
 
         rawTransactions.forEach(t => {
+            const officerName = (t as any).createdBy?.nama_lengkap || "Unknown"
+
             if (t.receiptId) {
                 if (!groups[t.receiptId]) {
                     groups[t.receiptId] = {
@@ -65,6 +75,7 @@ export async function getTransactions(
                         totalRice: 0,
                         type: t.type,
                         description: t.description,
+                        officerName: officerName, // Add officer name to group
                         isBulk: true
                     }
                 }
@@ -85,6 +96,7 @@ export async function getTransactions(
                     names: new Set([(t as any).muzakkiName || ""]),
                     totalAmount: t.amount,
                     totalRice: t.amount_rice || 0,
+                    officerName: officerName, // Add officer name to single
                     isBulk: false
                 })
             }
@@ -128,6 +140,11 @@ export async function getTransactions(
  * Menambahkan satu transaksi baru ke database.
  */
 export async function createTransaction(data: TransactionData) {
+    const session = await getSession()
+    if (!session || (session.role !== 'ADMINISTRATOR' && session.role !== 'PANITIA_ZIS')) {
+        return { success: false, error: "Anda tidak memiliki akses untuk mencatat transaksi." }
+    }
+
     try {
         await prisma.transaction.create({
             data: {
@@ -137,7 +154,9 @@ export async function createTransaction(data: TransactionData) {
                 description: data.description,
                 muzakkiName: data.muzakkiName,
                 paymentAmount: data.paymentAmount,
-                kembalian: data.kembalian
+                kembalian: data.kembalian,
+                createdById: session.userId,
+                updatedById: session.userId
             } as any,
         })
         revalidatePath("/transaksi")
@@ -174,6 +193,11 @@ export async function getTransactionsByReceiptId(receiptId: string) {
  * Memperbarui data transaksi yang sudah ada.
  */
 export async function updateTransaction(id: number, data: TransactionData) {
+    const session = await getSession()
+    if (!session || (session.role !== 'ADMINISTRATOR' && session.role !== 'PANITIA_ZIS')) {
+        return { success: false, error: "Anda tidak memiliki akses untuk mengubah transaksi." }
+    }
+
     try {
         await prisma.transaction.update({
             where: { id },
@@ -184,7 +208,8 @@ export async function updateTransaction(id: number, data: TransactionData) {
                 description: data.description,
                 muzakkiName: data.muzakkiName,
                 paymentAmount: data.paymentAmount,
-                kembalian: data.kembalian
+                kembalian: data.kembalian,
+                updatedById: session.userId
             } as any,
         })
         revalidatePath("/transaksi")
@@ -197,6 +222,11 @@ export async function updateTransaction(id: number, data: TransactionData) {
 }
 
 export async function deleteTransaction(id: number) {
+    const session = await getSession()
+    if (!session || session.role !== 'ADMINISTRATOR') {
+        return { success: false, error: "Hanya Administrator yang dapat menghapus transaksi." }
+    }
+
     try {
         await prisma.transaction.delete({
             where: { id },
@@ -211,6 +241,11 @@ export async function deleteTransaction(id: number) {
 }
 
 export async function deleteTransactionsByReceiptId(receiptId: string) {
+    const session = await getSession()
+    if (!session || session.role !== 'ADMINISTRATOR') {
+        return { success: false, error: "Hanya Administrator yang dapat menghapus transaksi." }
+    }
+
     try {
         await prisma.$transaction(async (tx) => {
             await tx.transaction.deleteMany({ where: { receiptId } })

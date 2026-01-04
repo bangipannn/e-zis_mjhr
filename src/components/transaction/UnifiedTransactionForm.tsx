@@ -25,19 +25,44 @@ interface UnifiedTransactionFormProps {
         paymentAmount?: number
     }
     originalId?: number // Added for single transaction edit fallback
+    currentUserRole?: 'ADMINISTRATOR' | 'PANITIA_ZIS'
 }
 
 /**
  * Komponen formulir utama untuk mencatat transaksi Zakat & Infaq.
  * Mendukung pencatatan batch (grup) dan satu-persatu.
  */
-export default function UnifiedTransactionForm({ initialData, originalId }: UnifiedTransactionFormProps) {
+export default function UnifiedTransactionForm({ initialData, originalId, currentUserRole }: UnifiedTransactionFormProps) {
     const router = useRouter()
     const [step, setStep] = useState<"INPUT" | "SUCCESS">("INPUT")
     const [isUpdate, setIsUpdate] = useState(false)
     const [loading, setLoading] = useState(false)
     const [receiptData, setReceiptData] = useState<ReceiptData | null>(null)
-    const [showAlert, setShowAlert] = useState(false)
+    const [alertConfig, setAlertConfig] = useState({
+        isOpen: false,
+        title: "",
+        description: "",
+        variant: "default" as "default" | "destructive" | "warning",
+        confirmText: "Ok, Saya Mengerti",
+        cancelText: "Tutup"
+    })
+
+    const closeAlert = () => setAlertConfig(prev => ({ ...prev, isOpen: false }))
+
+    // ... (rest of the state hooks remain effectively the same, just removing the explicit [showAlert, setShowAlert] line if I can match the context correctly.
+    // wait, replace_file_content works on chunks. I should target the state definition area and the alert usage area separately or safely.)
+
+    // Let's do this in one go if I can span the file. The file is large. I will split it.
+    // Chunk 1: State definition.
+    // Chunk 2: `handleSubmit` logic.
+    // Chunk 3: Render logic.
+
+    // Actually, since I have `replace_file_content`, I can replace the state init line first.
+    // Then replace the usages.
+    // But I need to define the state before using it.
+
+    // Let's replace the `showAlert` state definition.
+
 
     // State formulir: Mengatur input dari user
     const [type, setType] = useState<TransactionType>(initialData?.type || "FITRAH_UANG")
@@ -96,14 +121,41 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
 
         // Validasi Nama
         if (names.some(n => !n.trim())) {
-            alert("Harap isi semua nama muzakki")
+            setAlertConfig({
+                isOpen: true,
+                title: "Nama Muzakki Kosong",
+                description: "Harap isi semua nama muzakki yang tercantum.",
+                variant: "destructive",
+                confirmText: "Perbaiki",
+                cancelText: "Batal"
+            })
+            setLoading(false)
+            return
+        }
+
+        if (!currentUserRole) {
+            setAlertConfig({
+                isOpen: true,
+                title: "Login Diperlukan",
+                description: "Anda belum login. Silahkan login untuk mencatat transaksi.",
+                variant: "warning",
+                confirmText: "Login",
+                cancelText: "Batal"
+            })
             setLoading(false)
             return
         }
 
         // Validasi Pembayaran
         if (totalBayar > 0 && kembalian < 0) {
-            setShowAlert(true)
+            setAlertConfig({
+                isOpen: true,
+                title: "Pembayaran Kurang",
+                description: "Harap isi nominal uang yang diterima dengan benar sebelum melanjutkan.",
+                variant: "warning",
+                confirmText: "Ok, Saya Mengerti",
+                cancelText: "Tutup"
+            })
             setLoading(false)
             return
         }
@@ -125,7 +177,14 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                 // Redirect untuk menangani sukses pada halaman stabil (mencegah 404 pada ID dinamis saat ini)
                 router.push(`/transaksi?success=updated&receiptId=${res.receiptId}`)
             } else {
-                alert("Gagal memperbarui transaksi")
+                setAlertConfig({
+                    isOpen: true,
+                    title: "Gagal Memperbarui",
+                    description: "Terjadi kesalahan saat memperbarui data transaksi.",
+                    variant: "destructive",
+                    confirmText: "Coba Lagi",
+                    cancelText: "Tutup"
+                })
                 setLoading(false)
             }
         } else {
@@ -146,7 +205,14 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                 })
                 setStep("SUCCESS")
             } else {
-                alert("Gagal menyimpan transaksi")
+                setAlertConfig({
+                    isOpen: true,
+                    title: "Gagal Menyimpan",
+                    description: "Terjadi kesalahan saat menyimpan transaksi baru.",
+                    variant: "destructive",
+                    confirmText: "Coba Lagi",
+                    cancelText: "Tutup"
+                })
             }
             setLoading(false)
         }
@@ -475,22 +541,22 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                         <div className="absolute inset-0 arabic-pattern opacity-5 pointer-events-none" />
 
                         <CardContent className="p-8 sm:p-10 space-y-8 sm:space-y-10 relative z-10">
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="size-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+                                    <div className="size-10 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
                                         <Receipt className="size-5" />
                                     </div>
                                     <h2 className="text-xl sm:text-2xl font-black tracking-tight">Ringkasan</h2>
                                 </div>
-                                <div className="text-[10px] sm:text-[10px] font-black text-emerald-400/60 uppercase tracking-widest bg-emerald-900/50 px-3 py-1.5 rounded-full border border-emerald-800">
+                                <div className="self-start sm:self-auto text-[10px] sm:text-[10px] font-black text-emerald-400/60 uppercase tracking-widest bg-emerald-900/50 px-3 py-1.5 rounded-full border border-emerald-800 shrink-0">
                                     Live Preview
                                 </div>
                             </div>
 
                             <div className="space-y-6">
                                 <div className="flex justify-between items-center group/item">
-                                    <span className="text-emerald-100/60 font-medium text-sm">Zakat ({names.length} Jiwa)</span>
-                                    <span className="text-xl font-black tracking-tight group-hover:text-emerald-400 transition-colors">
+                                    <span className="text-emerald-100/60 font-medium text-xs sm:text-sm">Zakat ({names.length} Jiwa)</span>
+                                    <span className="text-lg sm:text-xl font-black tracking-tight group-hover:text-emerald-400 transition-colors">
                                         {type === "FITRAH_BERAS"
                                             ? `${totalZakatBeras} L`
                                             : new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(totalZakatUang ?? 0)
@@ -498,24 +564,24 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center group/item">
-                                    <span className="text-emerald-100/60 font-medium text-sm">Infaq / Sedekah</span>
-                                    <span className="text-xl font-black tracking-tight group-hover:text-emerald-400 transition-colors">
+                                    <span className="text-emerald-100/60 font-medium text-xs sm:text-sm">Infaq / Sedekah</span>
+                                    <span className="text-lg sm:text-xl font-black tracking-tight group-hover:text-emerald-400 transition-colors">
                                         {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(infaqAmount)}
                                     </span>
                                 </div>
 
                                 <div className="h-px w-full bg-gradient-to-r from-transparent via-emerald-800 to-transparent" />
 
-                                <div className="flex justify-between items-end">
+                                <div className="flex flex-col justify-between items-start gap-2">
                                     <div className="space-y-1">
                                         <span className="text-[10px] font-black text-emerald-400 uppercase tracking-[0.2em]">Total</span>
-                                        <p className="text-sm text-emerald-100/40">Zakat & Infaq Terakumulasi</p>
+                                        <p className="text-xs sm:text-sm text-emerald-100/40">Zakat & Infaq Terakumulasi</p>
                                     </div>
-                                    <div className="text-right">
-                                        <h3 className="text-4xl font-black text-emerald-400 tracking-tighter">
+                                    <div className="text-left w-full">
+                                        <h3 className="text-4xl sm:text-5xl font-black text-emerald-400 tracking-tighter truncate">
                                             {new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", maximumFractionDigits: 0 }).format(totalBayar)}
                                         </h3>
-                                        {type === "FITRAH_BERAS" && totalZakatBeras > 0 && <span className="text-xs font-black text-blue-400">+ {totalZakatBeras} L Beras</span>}
+                                        {type === "FITRAH_BERAS" && totalZakatBeras > 0 && <span className="text-xs font-black text-blue-400 block mt-1">+ {totalZakatBeras} L Beras</span>}
                                     </div>
                                 </div>
                             </div>
@@ -553,15 +619,20 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
 
                             <Button
                                 type="submit"
-                                disabled={loading}
-                                className="w-full h-20 text-xl font-black bg-emerald-500 hover:bg-emerald-400 text-white rounded-3xl shadow-xl shadow-emerald-500/20 transition-all active:scale-[0.98] group"
+                                disabled={loading || !currentUserRole}
+                                className={cn(
+                                    "w-full h-20 text-xl font-black rounded-3xl shadow-xl transition-all active:scale-[0.98] group",
+                                    !currentUserRole
+                                        ? "bg-gray-400 cursor-not-allowed text-gray-200"
+                                        : "bg-emerald-500 hover:bg-emerald-400 text-white shadow-emerald-500/20"
+                                )}
                             >
                                 {loading ? (
                                     <Loader2 className="size-8 animate-spin" />
                                 ) : (
                                     <span className="flex items-center gap-4">
                                         <Save className="size-6 group-hover:rotate-12 transition-transform" />
-                                        {initialData?.receiptId || originalId ? "Simpan Perubahan" : "Konfirmasi & Simpan"}
+                                        {!currentUserRole ? "Anda belum login" : (initialData?.receiptId || originalId ? "Simpan Perubahan" : "Konfirmasi & Simpan")}
                                     </span>
                                 )}
                             </Button>
@@ -580,14 +651,14 @@ export default function UnifiedTransactionForm({ initialData, originalId }: Unif
             </div>
 
             <AlertDialog
-                isOpen={showAlert}
-                onClose={() => setShowAlert(false)}
-                onConfirm={() => setShowAlert(false)}
-                variant="Warning!"
-                title="Pembayaran Kurang"
-                description="Harap isi nominal uang yang diterima dengan benar sebelum melanjutkan."
-                confirmText="Ok, Saya Mengerti"
-                cancelText="Tutup"
+                isOpen={alertConfig.isOpen}
+                onClose={closeAlert}
+                onConfirm={closeAlert}
+                variant={alertConfig.variant}
+                title={alertConfig.title}
+                description={alertConfig.description}
+                confirmText={alertConfig.confirmText}
+                cancelText={alertConfig.cancelText}
             />
         </form>
     )

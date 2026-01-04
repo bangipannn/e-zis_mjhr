@@ -1,23 +1,41 @@
 "use client"
 
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { usePathname } from "next/navigation"
-import { LayoutDashboard, CreditCard, MapPin } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
+import { LayoutDashboard, CreditCard, MapPin, Users } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { AlertDialog } from "@/components/ui/AlertDialog"
 
 const navigation = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Transaksi Zakat", href: "/transaksi", icon: CreditCard },
+    { name: "Manajemen User", href: "/users", icon: Users, roles: ['ADMINISTRATOR', 'PANITIA_ZIS'] },
 ]
 
 interface SidebarProps {
     isOpen: boolean
     onClose: () => void
+    role?: 'ADMINISTRATOR' | 'PANITIA_ZIS'
 }
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
+export function Sidebar({ isOpen, onClose, role }: SidebarProps) {
     const pathname = usePathname()
+    const router = useRouter()
+    const [showLoginAlert, setShowLoginAlert] = useState(false)
+
+    const handleNavigation = (e: React.MouseEvent, item: typeof navigation[0]) => {
+        // If item requires roles and user doesn't have a role (guest)
+        if (item.roles && !role) {
+            e.preventDefault()
+            setShowLoginAlert(true)
+            onClose() // Close sidebar on mobile
+            return
+        }
+
+        onClose()
+    }
 
     return (
         <>
@@ -64,7 +82,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                                     <Link
                                         key={index}
                                         href={item.href}
-                                        onClick={onClose}
+                                        onClick={(e) => handleNavigation(e, item)}
                                         className={cn(
                                             "flex items-center gap-4 rounded-2xl px-4 py-4 text-sm font-bold transition-all duration-300 relative group/nav",
                                             isActive
@@ -102,6 +120,22 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                     </div>
                 </div>
             </div>
+
+            {showLoginAlert && (
+                <AlertDialog
+                    isOpen={true}
+                    onClose={() => setShowLoginAlert(false)}
+                    onConfirm={() => {
+                        setShowLoginAlert(false)
+                        router.push('/login')
+                    }}
+                    title="Akses Terbatas"
+                    description="Anda harus login terlebih dahulu untuk mengakses menu Manajemen User."
+                    confirmText="Login Sekarang"
+                    cancelText="Batal"
+                    variant="warning"
+                />
+            )}
         </>
     )
 }

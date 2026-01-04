@@ -2,8 +2,10 @@ import UnifiedTransactionForm from "@/components/transaction/UnifiedTransactionF
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
+import { getSession } from "@/lib/auth/session"
 
-export default function NewTransactionPage() {
+export default async function NewTransactionPage() {
+    const session = await getSession()
     return (
         <div className="max-w-6xl mx-auto space-y-6">
             <div className="flex items-center gap-4">
@@ -16,7 +18,7 @@ export default function NewTransactionPage() {
             </div>
 
             <div className="p-1">
-                <UnifiedTransactionForm />
+                <UnifiedTransactionForm currentUserRole={session?.role} />
             </div>
         </div>
     )

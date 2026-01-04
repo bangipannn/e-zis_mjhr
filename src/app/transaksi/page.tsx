@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { DashboardDateFilter } from "@/components/dashboard/DashboardDateFilter"
 import { TransactionSearch } from "@/components/transaction/TransactionSearch"
 import { TransactionPagination } from "@/components/transaction/TransactionPagination"
+import { getSession } from "@/lib/auth/session"
 
 /**
  * Halaman Riwayat Transaksi.
@@ -28,6 +29,8 @@ export default async function TransactionPage(props: {
 
     // Fetch data transaksi sesuai parameter yang aktif
     const { data: transactions, metadata } = await getTransactions(startDate, endDate, query, page)
+
+    const session = await getSession()
 
     return (
         <div className="space-y-8 pb-20">
@@ -62,7 +65,7 @@ export default async function TransactionPage(props: {
                                     <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">ID / Kwitansi</th>
                                     <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Jenis Penerimaan</th>
                                     <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-right">Total Nominal</th>
-                                    <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Keterangan</th>
+                                    <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">Petugas ZIS</th>
                                     <th className="px-8 py-6 text-[10px] font-black text-gray-400 uppercase tracking-widest text-center">Aksi</th>
                                 </tr>
                             </thead>
@@ -121,13 +124,18 @@ export default async function TransactionPage(props: {
                                                 </div>
                                             </td>
                                             <td className="px-8 py-6">
-                                                <p className="text-xs font-medium text-gray-400 line-clamp-1 max-w-[200px]" title={t.description}>
-                                                    {t.description || "-"}
-                                                </p>
+                                                <div className="flex items-center gap-2">
+                                                    <div className="size-6 rounded-full bg-emerald-100 flex items-center justify-center text-[10px] font-bold text-emerald-700 border border-emerald-200">
+                                                        {t.officerName ? t.officerName.substring(0, 1) : "?"}
+                                                    </div>
+                                                    <span className="text-xs font-bold text-emerald-900 border-b border-dashed border-emerald-200 pb-0.5">
+                                                        {t.officerName || "Unknown"}
+                                                    </span>
+                                                </div>
                                             </td>
                                             <td className="px-8 py-6 text-center">
                                                 <div className="flex items-center justify-center transition-all">
-                                                    <TransactionRowActions transaction={t} />
+                                                    <TransactionRowActions transaction={t} currentUserRole={session?.role} />
                                                 </div>
                                             </td>
                                         </tr>
